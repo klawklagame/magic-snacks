@@ -1,52 +1,93 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<title>ข้อมูลของว่างเวทมนตร์ในเกม Clash of Clans</title>
-<meta name="description" content="สำรวจทุกของว่างเวทมนตร์ใน Clash of Clans พร้อมภาพสวย คำอธิบายเข้าใจง่าย เคล็ดลับการใช้งาน จบในหน้าเดียว!" />
-<link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Magic Snacks - KLAWKLA</title>
+  <meta name="description" content="สำรวจทุกของว่างเวทมนตร์ใน Clash of Clans พร้อมภาพสวย คำอธิบายเข้าใจง่าย เคล็ดลับการใช้งาน จบในหน้าเดียว!" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="header">
-  <a href="https://klawkla.com" class="logo-link" target="_blank" rel="noopener">
-    <span class="logo"><img src="https://klawkla.com/content/images/2025/08/logo.webp" alt="KLAWKLA"></span>
-  </a>
-  <div class="title">
-    <strong>ของว่างเวทมนตร์</strong>
-    <small>ภาพ • คำอธิบาย • ระยะเวลา • วิธีใช้</small>
+  <div class="wrap">
+    <!-- Floating Parallax Shapes -->
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+    <div class="bg-shape shape-3"></div>
+
+    <header>
+      <div class="container">
+        <div class="brand">
+          <div class="brand-badge" aria-hidden="true">
+            <a href="https://www.klawkla.com/">
+              <img src="https://klawkla.com/content/images/2025/08/logo.webp" alt="แกล้วกล้า" />
+            </a>
+          </div>
+          <div>
+            <strong>Magic Snacks</strong>
+            <br />
+            <small>ข้อมูลของว่างเวทมนตร์</small>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="infobar">
+      <button class="infobtn" data-info="source">ได้จากไหน?</button>
+      <button class="infobtn" data-info="storage">การเก็บ</button>
+      <button class="infobtn" data-info="usage">วิธีใช้งาน</button>
+    </div>
+
+    <div class="viewport" aria-roledescription="carousel">
+      <!-- Nav Arrows -->
+      <div class="nav" aria-hidden="false">
+        <button id="prev" aria-label="ก่อนหน้า">‹</button>
+        <button id="next" aria-label="ถัดไป">›</button>
+      </div>
+
+      <div class="track" id="track" aria-live="polite"></div>
+    </div>
+    
+    <div class="controls-wrap">
+      <div class="dots" id="dots" aria-hidden="false"></div>
+      <div>
+        <button class="showall" id="btnAll" type="button">ทั้งหมด</button>
+      </div>
+    </div>
+
+    <footer>
+      <div class="container">
+        <p class="support-message">
+          "ยกระดับการเล่นแคลชของคุณ" <br>
+          <span style="font-size: 0.8em; opacity: 0.7; font-style: normal;">สนับสนุนแกล้วด้วยโค้ด <span class="support-code">KLAWKLA</span></span>
+        </p>
+        <div class="links">
+          <a href="https://store.supercell.com/th/clashofclans?boost=KLAWKLA" target="_blank" rel="noopener noreferrer">
+            <span>ใช้โค้ด KLAWKLA</span> →
+          </a>
+          <a href="https://www.klawkla.com" target="_blank" rel="noopener noreferrer">
+            <span>เยี่ยมชมเว็บไซต์</span> →
+          </a>
+        </div>
+        <p class="credit">สร้างโดยผู้เล่นแคลชเพื่อผู้เล่นแคลช</p>
+      </div>
+    </footer>
   </div>
-</header>
 
-<div class="infobar">
-  <button class="infobtn" data-info="source">ได้จากไหน?</button>
-  <button class="infobtn" data-info="storage">การเก็บ</button>
-  <button class="infobtn" data-info="usage">วิธีใช้งาน</button>
-</div>
+  <!-- Show All Overlay -->
+  <aside class="allpanel" id="allPanel" aria-hidden="true">
+    <button class="close" id="closeAll" aria-label="ปิด">×</button>
+    <div class="grid" id="allGrid" role="list"></div>
+  </aside>
 
-<main class="viewport" aria-roledescription="carousel">
-  <div class="track" id="track" aria-live="polite"></div>
-  <div class="nav" aria-hidden="false">
-    <button id="prev" aria-label="ก่อนหน้า">‹</button>
-    <button id="next" aria-label="ถัดไป">›</button>
-  </div>
-  <div class="dots" id="dots" aria-hidden="false"></div>
-  <button class="showall" id="btnAll" type="button">แสดงทั้งหมด</button>
-</main>
+  <!-- Info Modal -->
+  <aside class="infomodal" id="infoModal" aria-hidden="true">
+    <div class="ibox">
+      <button class="iclose" id="infoClose" aria-label="ปิด">×</button>
+      <h3 id="infoTitle"></h3>
+      <div id="infoBody"></div>
+    </div>
+  </aside>
 
-<aside class="allpanel" id="allPanel" aria-hidden="true">
-  <button class="close" id="closeAll" aria-label="ปิด">×</button>
-  <div class="grid" id="allGrid" role="list"></div>
-</aside>
-
-<aside class="infomodal" id="infoModal" aria-hidden="true">
-  <div class="ibox">
-    <button class="iclose" id="infoClose" aria-label="ปิด">×</button>
-    <h3 id="infoTitle"></h3>
-    <div id="infoBody"></div>
-  </div>
-</aside>
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
