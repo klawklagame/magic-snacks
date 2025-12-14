@@ -524,9 +524,10 @@ i.free {
 .allpanel .grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  align-content: start;
+  place-content: center;
   gap: 12px;
   padding: 70px 16px 24px 16px;
+  min-height: 100%;
 }
 
 .grid {
