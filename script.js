@@ -115,6 +115,14 @@ window.addEventListener('keydown', (e)=>{
 });
 
 const THRESH = 80;
+const TOUCH_THRESH = 50;
+let touchStartX = 0;
+let touchStartY = 0;
+let touchCurrentX = 0;
+let touchCurrentY = 0;
+let isTouchSwiping = false;
+let touchDirection = null;
+
 track.addEventListener('pointerdown', (e)=>{
   if(allPanel.classList.contains('open') || infoModal.classList.contains('open')) return;
   dragging = true; startX = e.clientX; currentX = startX;
@@ -139,6 +147,61 @@ function endDrag(){
 }
 track.addEventListener('pointerup', endDrag);
 track.addEventListener('pointercancel', endDrag);
+
+// Touch events for mobile swipe
+track.addEventListener('touchstart', (e) => {
+  if(allPanel.classList.contains('open') || infoModal.classList.contains('open')) return;
+  const touch = e.touches[0];
+  touchStartX = touch.clientX;
+  touchStartY = touch.clientY;
+  touchCurrentX = touchStartX;
+  touchCurrentY = touchStartY;
+  isTouchSwiping = false;
+  touchDirection = null;
+  track.classList.remove('animating');
+}, { passive: true });
+
+track.addEventListener('touchmove', (e) => {
+  if(allPanel.classList.contains('open') || infoModal.classList.contains('open')) return;
+  const touch = e.touches[0];
+  touchCurrentX = touch.clientX;
+  touchCurrentY = touch.clientY;
+  
+  const deltaX = touchCurrentX - touchStartX;
+  const deltaY = touchCurrentY - touchStartY;
+  
+  // Determine swipe direction on first significant move
+  if(!touchDirection && (Math.abs(deltaX) > 10 || Math.abs(deltaY) > 10)) {
+    touchDirection = Math.abs(deltaX) > Math.abs(deltaY) ? 'horizontal' : 'vertical';
+  }
+  
+  // Only handle horizontal swipes
+  if(touchDirection === 'horizontal') {
+    isTouchSwiping = true;
+    e.preventDefault();
+    setTransform(toX(index) + deltaX);
+  }
+}, { passive: false });
+
+track.addEventListener('touchend', (e) => {
+  if(!isTouchSwiping) return;
+  
+  const deltaX = touchCurrentX - touchStartX;
+  
+  if(Math.abs(deltaX) > TOUCH_THRESH) {
+    if(deltaX < 0) {
+      go(index + 1);
+    } else {
+      go(index - 1);
+    }
+  } else {
+    go(index);
+  }
+  
+  isTouchSwiping = false;
+  touchDirection = null;
+}, { passive: true });
+
 window.addEventListener('resize', size);
 
 // Parallax Effect with Debouncing
