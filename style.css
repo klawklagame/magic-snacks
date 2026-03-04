@@ -1,23 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;600&display=swap');
-
-@font-face {
-  font-family: "FC Krung Thep Light";
-  src: url("FCKrungThep-Light.woff2") format("woff2"),
-       url("FCKrungThep-Light.woff") format("woff");
-  font-display: swap;
-}
-@font-face {
-  font-family: "FC Maha Nakhon Flat Light";
-  src: url("FCMahaNakhonFlat-Light.woff2") format("woff2"),
-       url("FCMahaNakhonFlat-Light.woff") format("woff");
-  font-display: swap;
-}
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Sarabun:wght@300;400;600&family=Kanit:wght@300;400;500&display=swap');
 
 :root {
   /* Typography */
   --font-heading: "Playfair Display", serif;
-  --font-body: "FC Maha Nakhon Flat Light", "Inter", sans-serif;
-  --font-interface: "FC Krung Thep Light", "Inter", sans-serif;
+  --font-body: "Sarabun", sans-serif;
+  --font-interface: "Kanit", sans-serif;
 
   /* Premium Neon/Pink Theme Palette */
   --bg: #050005;
