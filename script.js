@@ -85,7 +85,7 @@ SNACKS.forEach((it,i)=>{
 const slides = Array.from(track.children);
 const prevBtn = document.getElementById('prev');
 const nextBtn = document.getElementById('next');
-let index = 0, startX = 0, currentX = 0, dragging = false, width = 0;
+let index = 0, width = 0;
 
 function clamp(n,min,max){ return Math.max(min, Math.min(n,max)); }
 function setTransform(px){ track.style.transform = `translate3d(${px}px,0,0)`; }

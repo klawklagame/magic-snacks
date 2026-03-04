@@ -594,7 +594,7 @@ i.free {
 .infomodal {
   position: fixed;
   inset: 0;
-  display: none;
+  display: flex;
   z-index: 20;
   background: rgba(5, 0, 5, 0.8);
   backdrop-filter: blur(10px);
@@ -602,12 +602,13 @@ i.free {
   justify-content: center;
   padding: 16px;
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease, visibility 0.3s;
 }
-.infomodal.open { 
-  display: flex;
+.infomodal.open {
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
 }
 
