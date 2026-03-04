@@ -304,3 +304,90 @@ function closeInfo(){
 }
 infoClose.addEventListener('click', closeInfo);
 infoModal.addEventListener('click', (e)=>{ if(e.target===infoModal) closeInfo(); });
+
+/* ══════════════════════════════════════════════════
+   ENHANCEMENTS
+   ══════════════════════════════════════════════════ */
+
+// 1. Patch go() to trigger card entrance animation on slide change
+const _origGo = go;
+go = function(i, animate) {
+  if (animate === undefined) animate = true;
+  _origGo(i, animate);
+  if (animate && slides[index]) {
+    const card = slides[index].querySelector('.magic-card');
+    if (card) {
+      card.classList.remove('card-entering');
+      void card.offsetWidth; // force reflow
+      card.classList.add('card-entering');
+      setTimeout(() => card.classList.remove('card-entering'), 700);
+    }
+  }
+};
+
+// 2. Ripple effect on infobtn and showall clicks
+document.querySelectorAll('.infobtn, .showall').forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    const ripple = document.createElement('span');
+    ripple.className = 'btn-ripple';
+    const rect = this.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height) * 2;
+    const x = e.clientX - rect.left - size / 2;
+    const y = e.clientY - rect.top  - size / 2;
+    ripple.style.cssText = `width:${size}px;height:${size}px;left:${x}px;top:${y}px;position:absolute;`;
+    this.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 700);
+  });
+});
+
+// 3. Custom cursor — pointer devices only
+if (window.matchMedia('(pointer: fine)').matches) {
+  const cursorDot  = document.createElement('div');
+  const cursorRing = document.createElement('div');
+  cursorDot.className  = 'cursor-dot';
+  cursorRing.className = 'cursor-ring';
+  document.body.appendChild(cursorDot);
+  document.body.appendChild(cursorRing);
+
+  let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+  let rx = mx, ry = my;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX;
+    my = e.clientY;
+    cursorDot.style.left = mx + 'px';
+    cursorDot.style.top  = my + 'px';
+  }, { passive: true });
+
+  // Ring lags behind with spring easing
+  (function ringLoop() {
+    rx += (mx - rx) * 0.13;
+    ry += (my - ry) * 0.13;
+    cursorRing.style.left = rx.toFixed(2) + 'px';
+    cursorRing.style.top  = ry.toFixed(2) + 'px';
+    requestAnimationFrame(ringLoop);
+  })();
+
+  // Expand cursor on interactive elements
+  const interactives = 'button, a, .dot, [role="listitem"], .tile, .infobtn';
+  document.querySelectorAll(interactives).forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursorDot.classList.add('cursor-hover');
+      cursorRing.classList.add('cursor-hover');
+    }, { passive: true });
+    el.addEventListener('mouseleave', () => {
+      cursorDot.classList.remove('cursor-hover');
+      cursorRing.classList.remove('cursor-hover');
+    }, { passive: true });
+  });
+
+  // Hide cursor when leaving window
+  document.addEventListener('mouseleave', () => {
+    cursorDot.style.opacity = '0';
+    cursorRing.style.opacity = '0';
+  }, { passive: true });
+  document.addEventListener('mouseenter', () => {
+    cursorDot.style.opacity = '1';
+    cursorRing.style.opacity = '1';
+  }, { passive: true });
+}

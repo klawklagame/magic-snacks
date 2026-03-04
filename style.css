@@ -1099,3 +1099,319 @@ footer a:hover {
     margin-bottom: 32px;
   }
 }
+
+/* ════════════════════════════════════════════════════════
+   ENHANCED DESIGN & ANIMATIONS — Phase 2
+   ════════════════════════════════════════════════════════ */
+
+/* ── Keyframes ── */
+@keyframes enterDown {
+  from { opacity: 0; transform: translateY(-28px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes enterUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes scaleReveal {
+  from { opacity: 0; transform: scale(0.93) translateY(14px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes logoFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  40%       { transform: translateY(-7px) rotate(1.5deg); }
+  70%       { transform: translateY(-3px) rotate(-0.8deg); }
+}
+@keyframes mediaFloat {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-12px); }
+}
+@keyframes cardEnter {
+  from { opacity: 0; transform: translateY(22px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes dotRipple {
+  0%   { box-shadow: 0 0 0 0 rgba(247, 37, 133, 0.8), 0 0 10px rgba(247, 37, 133, 0.5); }
+  100% { box-shadow: 0 0 0 10px rgba(247, 37, 133, 0), 0 0 10px rgba(247, 37, 133, 0.5); }
+}
+@keyframes orbBreath {
+  0%, 100% { opacity: 0.12; transform: translateX(-50%) scaleX(1); }
+  50%       { opacity: 0.22; transform: translateX(-50%) scaleX(1.25); }
+}
+@keyframes lineShimmer {
+  0%   { background-position: -200% center; opacity: 0.45; }
+  50%  { opacity: 0.95; }
+  100% { background-position: 200% center; opacity: 0.45; }
+}
+@keyframes cardSweep {
+  from { left: -80%; }
+  to   { left: 160%; }
+}
+@keyframes rippleOut {
+  to { transform: scale(4); opacity: 0; }
+}
+@keyframes modalEnter {
+  from { opacity: 0; transform: scale(0.9) translateY(12px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes panelSlideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Page Entrance ── */
+header       { animation: enterDown  0.8s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.viewport    { animation: scaleReveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both; }
+.controls-wrap { animation: enterUp  0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.42s both; }
+footer       { animation: enterUp    0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.52s both; }
+
+/* Stagger infobar pills */
+.infobar     { animation: none; }
+.infobtn     { animation: enterUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.infobtn:nth-child(1) { animation-delay: 0.18s; }
+.infobtn:nth-child(2) { animation-delay: 0.28s; }
+.infobtn:nth-child(3) { animation-delay: 0.38s; }
+
+/* ── Ambient Orb — animated breathing ── */
+.wrap::before {
+  animation: orbBreath 7s ease-in-out infinite;
+}
+
+/* ── Brand Logo Float ── */
+.brand-badge {
+  animation: logoFloat 5s ease-in-out infinite;
+}
+
+/* ── Snack Image Float ── */
+.media {
+  animation: mediaFloat 4s ease-in-out infinite;
+}
+.magic-card:hover .media {
+  animation-play-state: paused;
+}
+
+/* ── Card Top Line — animated shimmer ── */
+.magic-card::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(247, 37, 133, 0.4) 20%,
+    #f72585 50%,
+    rgba(247, 37, 133, 0.4) 80%,
+    transparent 100%
+  );
+  background-size: 200% auto;
+  animation: lineShimmer 3.5s ease-in-out infinite;
+  opacity: 0.65;
+  height: 1.5px;
+}
+
+/* ── Card hover sweep ── */
+.magic-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -80%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.03),
+    rgba(255, 255, 255, 0.015),
+    transparent
+  );
+  transform: skewX(-18deg);
+  pointer-events: none;
+  z-index: 1;
+  transition: none;
+}
+.magic-card:hover::before {
+  animation: cardSweep 0.75s ease-out forwards;
+}
+
+/* ── Card hover — richer glow ── */
+.magic-card:hover {
+  border-color: rgba(247, 37, 133, 0.35);
+  transform: translateY(-4px);
+  box-shadow:
+    0 40px 80px -16px rgba(0, 0, 0, 0.96),
+    0 0 0 1px rgba(247, 37, 133, 0.12),
+    0 0 60px rgba(247, 37, 133, 0.14),
+    0 0 120px rgba(247, 37, 133, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+/* ── Active dot ripple ── */
+.dot.active {
+  animation: dotRipple 1.6s ease-out infinite;
+}
+
+/* ── Nav button — glow ring on hover ── */
+.nav button:hover {
+  box-shadow:
+    0 0 0 4px rgba(247, 37, 133, 0.15),
+    0 0 20px rgba(247, 37, 133, 0.4);
+}
+
+/* ── Infobtn ripple ── */
+.infobtn { position: relative; overflow: hidden; }
+.showall  { position: relative; overflow: hidden; }
+.btn-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(247, 37, 133, 0.28);
+  transform: scale(0);
+  animation: rippleOut 0.65s ease-out forwards;
+  pointer-events: none;
+}
+
+/* ── Infobtn hover — subtle glow ── */
+.infobtn:hover {
+  background: rgba(247, 37, 133, 0.15);
+  border-color: var(--primary);
+  color: var(--primary);
+  box-shadow: 0 0 16px rgba(247, 37, 133, 0.2);
+}
+
+/* ── Showall button hover ── */
+.showall:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  box-shadow: 0 0 24px rgba(247, 37, 133, 0.4), 0 0 60px rgba(247, 37, 133, 0.15);
+  transform: translateY(-1px);
+}
+
+/* ── Card entering class (JS-triggered) ── */
+.card-entering {
+  animation: cardEnter 0.65s cubic-bezier(0.16, 1, 0.3, 1) both !important;
+}
+
+/* ── All-panel tile stagger ── */
+.allpanel.open .tile {
+  animation: scaleReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.allpanel.open .tile:nth-child(1) { animation-delay: 0.06s; }
+.allpanel.open .tile:nth-child(2) { animation-delay: 0.11s; }
+.allpanel.open .tile:nth-child(3) { animation-delay: 0.16s; }
+.allpanel.open .tile:nth-child(4) { animation-delay: 0.21s; }
+.allpanel.open .tile:nth-child(5) { animation-delay: 0.26s; }
+
+/* ── Info modal entrance ── */
+.infomodal.open .ibox {
+  animation: modalEnter 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ── All panel grid entrance ── */
+.allpanel.open .grid {
+  animation: panelSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
+}
+
+/* ── Brand text — soft glow pulse ── */
+.brand strong {
+  text-shadow:
+    0 0 30px rgba(247, 37, 133, 0.2),
+    0 0 60px rgba(247, 37, 133, 0.08);
+}
+
+/* ── h1 item name — subtle text glow ── */
+.h1 {
+  text-shadow: 0 0 20px rgba(255, 238, 248, 0.08);
+}
+
+/* ── Meta line — brighter ── */
+.meta {
+  text-shadow: 0 0 16px rgba(247, 37, 133, 0.4);
+}
+
+/* ── Chips — entrance when card shown ── */
+.infochips .chip {
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s, border-color 0.25s;
+}
+.infochips .chip:hover {
+  transform: translateY(-2px) scale(1.04);
+  border-color: rgba(247, 37, 133, 0.35);
+  box-shadow: 0 4px 14px rgba(247, 37, 133, 0.18);
+}
+
+/* ── Grain noise overlay ── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  opacity: 0.028;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── Custom cursor (pointer devices) ── */
+@media (pointer: fine) {
+  *, *::before, *::after { cursor: none !important; }
+}
+.cursor-dot {
+  position: fixed;
+  top: 0; left: 0;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--primary);
+  pointer-events: none;
+  z-index: 100000;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 14px rgba(247, 37, 133, 0.9);
+  transition: width 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              height 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.2s;
+  mix-blend-mode: screen;
+}
+.cursor-ring {
+  position: fixed;
+  top: 0; left: 0;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(247, 37, 133, 0.45);
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+  transition: width 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              height 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s;
+}
+.cursor-dot.cursor-hover {
+  width: 16px; height: 16px;
+  background: #fff;
+  box-shadow: 0 0 20px rgba(247, 37, 133, 1);
+}
+.cursor-ring.cursor-hover {
+  width: 54px; height: 54px;
+  border-color: rgba(247, 37, 133, 0.75);
+}
+
+/* ── Footer link hover ── */
+footer a:hover {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  text-shadow: 0 0 12px rgba(247, 37, 133, 0.4);
+}
+
+/* ── Support code glow pulse ── */
+.support-code {
+  box-shadow: 0 0 12px rgba(247, 37, 133, 0.25);
+  transition: box-shadow 0.3s, color 0.3s;
+}
+.support-code:hover {
+  box-shadow: 0 0 24px rgba(247, 37, 133, 0.5);
+}
+
+/* ── Reduced motion — respect preference ── */
+@media (prefers-reduced-motion: reduce) {
+  header, .viewport, .controls-wrap, footer,
+  .infobtn, .wrap::before, .brand-badge,
+  .media, .magic-card::after, .dot,
+  .allpanel.open .tile, .infomodal.open .ibox,
+  .card-entering {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}
