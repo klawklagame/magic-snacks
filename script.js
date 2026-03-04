@@ -114,93 +114,89 @@ window.addEventListener('keydown', (e)=>{
   if(e.key==='ArrowRight') go(index+1);
 });
 
-const THRESH = 80;
-const TOUCH_THRESH = 50;
-let touchStartX = 0;
-let touchStartY = 0;
-let touchCurrentX = 0;
-let touchCurrentY = 0;
-let isTouchSwiping = false;
-let touchDirection = null;
+// ── Unified Swipe System ──
+const SWIPE_MIN   = 35;   // px — minimum distance to trigger
+const SWIPE_VEL   = 0.28; // px/ms — fast-flick threshold (ignores distance)
+const DIR_LOCK    = 7;    // px — movement before direction is decided
+const EDGE_RESIST = 0.18; // fraction of drag applied at first/last slide
 
-track.addEventListener('pointerdown', (e)=>{
-  if(allPanel.classList.contains('open') || infoModal.classList.contains('open')) return;
-  dragging = true; startX = e.clientX; currentX = startX;
-  track.setPointerCapture(e.pointerId);
+let sw = {
+  active: false, dragging: false, dir: null,
+  x0: 0, y0: 0, x: 0, t0: 0
+};
+
+function swipeStart(x, y) {
+  if (allPanel.classList.contains('open') || infoModal.classList.contains('open')) return;
+  sw = { active: true, dragging: false, dir: null, x0: x, y0: y, x, t0: Date.now() };
   track.classList.remove('animating');
-});
-track.addEventListener('pointermove', (e)=>{
-  if(!dragging) return;
-  currentX = e.clientX;
-  const delta = currentX - startX;
-  setTransform(toX(index) + delta);
-});
-function endDrag(){
-  if(!dragging) return;
-  dragging = false;
-  const delta = currentX - startX;
-  if(Math.abs(delta) > THRESH){
-    if(delta < 0) go(index+1); else go(index-1);
-  }else{
-    go(index);
-  }
 }
-track.addEventListener('pointerup', endDrag);
-track.addEventListener('pointercancel', endDrag);
 
-// Touch events for mobile swipe
-track.addEventListener('touchstart', (e) => {
-  if(allPanel.classList.contains('open') || infoModal.classList.contains('open')) return;
-  const touch = e.touches[0];
-  touchStartX = touch.clientX;
-  touchStartY = touch.clientY;
-  touchCurrentX = touchStartX;
-  touchCurrentY = touchStartY;
-  isTouchSwiping = false;
-  touchDirection = null;
-  track.classList.remove('animating');
-}, { passive: true });
+function swipeMove(x, y) {
+  if (!sw.active) return;
+  const dx = x - sw.x0;
+  const dy = y - sw.y0;
 
-track.addEventListener('touchmove', (e) => {
-  if(allPanel.classList.contains('open') || infoModal.classList.contains('open')) return;
-  const touch = e.touches[0];
-  touchCurrentX = touch.clientX;
-  touchCurrentY = touch.clientY;
-  
-  const deltaX = touchCurrentX - touchStartX;
-  const deltaY = touchCurrentY - touchStartY;
-  
-  // Determine swipe direction on first significant move
-  if(!touchDirection && (Math.abs(deltaX) > 10 || Math.abs(deltaY) > 10)) {
-    touchDirection = Math.abs(deltaX) > Math.abs(deltaY) ? 'horizontal' : 'vertical';
+  if (!sw.dir) {
+    if (Math.abs(dx) < DIR_LOCK && Math.abs(dy) < DIR_LOCK) return;
+    sw.dir = Math.abs(dx) >= Math.abs(dy) ? 'h' : 'v';
+    if (sw.dir === 'v') { sw.active = false; return; }
+    sw.dragging = true;
   }
-  
-  // Only handle horizontal swipes
-  if(touchDirection === 'horizontal') {
-    isTouchSwiping = true;
-    e.preventDefault();
-    setTransform(toX(index) + deltaX);
-  }
-}, { passive: false });
 
-track.addEventListener('touchend', (e) => {
-  if(!isTouchSwiping) return;
-  
-  const deltaX = touchCurrentX - touchStartX;
-  
-  if(Math.abs(deltaX) > TOUCH_THRESH) {
-    if(deltaX < 0) {
-      go(index + 1);
-    } else {
-      go(index - 1);
-    }
+  if (!sw.dragging) return;
+  sw.x = x;
+
+  // Rubber-band resistance at first and last slide
+  let d = dx;
+  if ((index === 0 && dx > 0) || (index === slides.length - 1 && dx < 0)) {
+    d = dx * EDGE_RESIST;
+  }
+  setTransform(toX(index) + d);
+}
+
+function swipeEnd() {
+  if (!sw.dragging) { sw.active = false; return; }
+  sw.active = false;
+  sw.dragging = false;
+
+  const dx  = sw.x - sw.x0;
+  const vel = Math.abs(dx) / Math.max(1, Date.now() - sw.t0);
+
+  if (Math.abs(dx) > SWIPE_MIN || vel > SWIPE_VEL) {
+    go(dx < 0 ? index + 1 : index - 1);
   } else {
     go(index);
   }
-  
-  isTouchSwiping = false;
-  touchDirection = null;
+}
+
+// Pointer events — mouse & stylus only (touch handled separately to avoid double-fire)
+track.addEventListener('pointerdown', e => {
+  if (e.pointerType === 'touch') return;
+  swipeStart(e.clientX, e.clientY);
+  track.setPointerCapture(e.pointerId);
+});
+track.addEventListener('pointermove', e => {
+  if (e.pointerType === 'touch') return;
+  swipeMove(e.clientX, e.clientY);
+});
+track.addEventListener('pointerup',     e => { if (e.pointerType !== 'touch') swipeEnd(); });
+track.addEventListener('pointercancel', e => { if (e.pointerType !== 'touch') swipeEnd(); });
+
+// Touch events — mobile
+track.addEventListener('touchstart', e => {
+  const t = e.touches[0];
+  swipeStart(t.clientX, t.clientY);
 }, { passive: true });
+
+track.addEventListener('touchmove', e => {
+  if (!sw.active) return;
+  const t = e.touches[0];
+  swipeMove(t.clientX, t.clientY);
+  if (sw.dragging) e.preventDefault(); // prevent page scroll only when swiping horizontally
+}, { passive: false });
+
+track.addEventListener('touchend',    () => swipeEnd(), { passive: true });
+track.addEventListener('touchcancel', () => swipeEnd(), { passive: true });
 
 window.addEventListener('resize', size);
 
