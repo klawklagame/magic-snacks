@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Magic Snacks - KLAWKLA</title>
   <meta name="description" content="สำรวจทุกของว่างเวทมนตร์ใน Clash of Clans พร้อมภาพสวย คำอธิบายเข้าใจง่าย เคล็ดลับการใช้งาน จบในหน้าเดียว!" />
+  <meta name="theme-color" content="#050005">
+  <meta name="color-scheme" content="dark">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://klawkla.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Sarabun:wght@300;400;600&family=Kanit:wght@300;400;500&display=swap">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -19,7 +25,7 @@
         <div class="brand">
           <div class="brand-badge" aria-hidden="true">
             <a href="https://www.klawkla.com/">
-              <img src="https://klawkla.com/content/images/2025/08/logo.webp" alt="แกล้วกล้า" />
+              <img src="https://klawkla.com/content/images/2025/08/logo.webp" alt="แกล้วกล้า" width="80" height="80" fetchpriority="high" decoding="async" />
             </a>
           </div>
           <div>
@@ -32,23 +38,23 @@
     </header>
 
     <div class="infobar">
-      <button class="infobtn" data-info="source">ได้จากไหน?</button>
-      <button class="infobtn" data-info="storage">การเก็บ</button>
-      <button class="infobtn" data-info="usage">วิธีใช้งาน</button>
+      <button class="infobtn" type="button" data-info="source">ได้จากไหน?</button>
+      <button class="infobtn" type="button" data-info="storage">การเก็บ</button>
+      <button class="infobtn" type="button" data-info="usage">วิธีใช้งาน</button>
     </div>
 
-    <div class="viewport" aria-roledescription="carousel">
+    <div class="viewport" role="region" aria-roledescription="carousel" aria-label="Magic Snacks">
       <!-- Nav Arrows -->
-      <div class="nav" aria-hidden="false">
-        <button id="prev" aria-label="ก่อนหน้า">‹</button>
-        <button id="next" aria-label="ถัดไป">›</button>
+      <div class="nav">
+        <button id="prev" type="button" aria-label="ก่อนหน้า">‹</button>
+        <button id="next" type="button" aria-label="ถัดไป">›</button>
       </div>
 
-      <div class="track" id="track" aria-live="polite"></div>
+      <div class="track" id="track"></div>
     </div>
-    
+
     <div class="controls-wrap">
-      <div class="dots" id="dots" aria-hidden="false"></div>
+      <div class="dots" id="dots"></div>
       <div>
         <button class="showall" id="btnAll" type="button">ทั้งหมด</button>
       </div>
@@ -75,19 +81,19 @@
 
   <!-- Show All Overlay -->
   <aside class="allpanel" id="allPanel" aria-hidden="true">
-    <button class="close" id="closeAll" aria-label="ปิด">×</button>
+    <button class="close" id="closeAll" type="button" aria-label="ปิด">×</button>
     <div class="grid" id="allGrid" role="list"></div>
   </aside>
 
   <!-- Info Modal -->
   <aside class="infomodal" id="infoModal" aria-hidden="true">
     <div class="ibox">
-      <button class="iclose" id="infoClose" aria-label="ปิด">×</button>
+      <button class="iclose" id="infoClose" type="button" aria-label="ปิด">×</button>
       <h3 id="infoTitle"></h3>
       <div id="infoBody"></div>
     </div>
   </aside>
 
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
 </body>
 </html>
