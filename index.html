@@ -1,99 +1,181 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Magic Snacks - KLAWKLA</title>
-  <meta name="description" content="สำรวจทุกของว่างเวทมนตร์ใน Clash of Clans พร้อมภาพสวย คำอธิบายเข้าใจง่าย เคล็ดลับการใช้งาน จบในหน้าเดียว!" />
-  <meta name="theme-color" content="#050005">
-  <meta name="color-scheme" content="dark">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://klawkla.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Sarabun:wght@300;400;600&family=Kanit:wght@300;400;500&display=swap">
-  <link rel="stylesheet" href="style.css">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content="สำรวจทุกของว่างเวทมนตร์ใน Clash of Clans พร้อมภาพ คำอธิบาย เคล็ดลับการใช้งาน" />
+    <meta name="theme-color" content="#050406">
+    <meta name="color-scheme" content="dark">
+    <title>Magic Snacks · KLAWKLA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://klawkla.com" crossorigin>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700&family=Noto+Serif+Thai:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <div class="wrap">
-    <!-- Floating Parallax Shapes -->
-    <div class="bg-shape shape-1"></div>
-    <div class="bg-shape shape-2"></div>
-    <div class="bg-shape shape-3"></div>
-
-    <header>
-      <div class="container">
-        <div class="brand">
-          <div class="brand-badge" aria-hidden="true">
-            <a href="https://www.klawkla.com/">
-              <img src="https://klawkla.com/content/images/2025/08/logo.webp" alt="แกล้วกล้า" width="80" height="80" fetchpriority="high" decoding="async" />
-            </a>
-          </div>
-          <div>
-            <strong>Magic Snacks</strong>
-            <br />
-            <small>ข้อมูลของว่างเวทมนตร์</small>
-          </div>
+    <div class="wrap">
+        <!-- page-level orbit -->
+        <div class="x-orbit" aria-hidden="true">
+            <span class="x-float x-float--1">✦</span>
+            <span class="x-float x-float--2">◆</span>
+            <span class="x-float x-float--3">+</span>
+            <span class="x-float x-float--4">✦</span>
         </div>
-      </div>
-    </header>
 
-    <div class="infobar">
-      <button class="infobtn" type="button" data-info="source">ได้จากไหน?</button>
-      <button class="infobtn" type="button" data-info="storage">การเก็บ</button>
-      <button class="infobtn" type="button" data-info="usage">วิธีใช้งาน</button>
-    </div>
+        <header class="gh-hero reveal" style="--i:0;">
+            <div class="container">
+                <div class="gh-hero-top">
+                    <a class="gh-hero-brand" href="https://www.klawkla.com/">
+                        <img src="https://klawkla.com/content/images/2025/08/logo.webp" alt="แกล้วกล้า"
+                            width="64" height="64" fetchpriority="high" decoding="async" />
+                        <span class="gh-hero-brand-text">KLAWKLA</span>
+                    </a>
 
-    <div class="viewport" role="region" aria-roledescription="carousel" aria-label="Magic Snacks">
-      <!-- Nav Arrows -->
-      <div class="nav">
-        <button id="prev" type="button" aria-label="ก่อนหน้า">‹</button>
-        <button id="next" type="button" aria-label="ถัดไป">›</button>
-      </div>
+                    <div class="x-seal" aria-hidden="true">
+                        <svg class="x-seal-svg" viewBox="0 0 120 120" width="100%" height="100%">
+                            <defs>
+                                <path id="x-seal-path"
+                                    d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0" />
+                            </defs>
+                            <text font-size="11">
+                                <textPath href="#x-seal-path" startOffset="0" textLength="276" lengthAdjust="spacing">
+                                    KLAWKLA · CLASH OF CLANS ·
+                                </textPath>
+                            </text>
+                        </svg>
+                        <span class="x-seal-core"><span class="x-seal-glyph">✦</span></span>
+                    </div>
+                </div>
 
-      <div class="track" id="track"></div>
-    </div>
+                <div class="x-eyebrow">
+                    <span class="x-eyebrow-dash" aria-hidden="true"></span>
+                    <span>เครื่องมือชาวแคลช</span>
+                    <span class="x-eyebrow-dash" aria-hidden="true"></span>
+                </div>
 
-    <div class="controls-wrap">
-      <div class="dots" id="dots"></div>
-      <div>
-        <button class="showall" id="btnAll" type="button">ทั้งหมด</button>
-      </div>
-    </div>
+                <h1 class="gh-hero-title">
+                    <span class="x-title-text">ข้อมูลของว่างเวทมนตร์</span><span class="x-title-dot" aria-hidden="true">.</span>
+                </h1>
 
-    <footer>
-      <div class="container">
-        <p class="support-message">
-          "ยกระดับการเล่นแคลชของคุณ" <br>
-          <span style="font-size: 0.8em; opacity: 0.7; font-style: normal;">สนับสนุนแกล้วด้วยโค้ด <span class="support-code">KLAWKLA</span></span>
-        </p>
-        <div class="links">
-          <a href="https://store.supercell.com/th/clashofclans?boost=KLAWKLA" target="_blank" rel="noopener noreferrer">
-            <span>ใช้โค้ด KLAWKLA</span> →
-          </a>
-          <a href="https://www.klawkla.com" target="_blank" rel="noopener noreferrer">
-            <span>เยี่ยมชมเว็บไซต์</span> →
-          </a>
+                <p class="gh-hero-sub">
+                    ข้อมูลของว่างเวทมนตร์ทั้งหมดใน Clash of Clans
+                </p>
+            </div>
+        </header>
+
+        <div class="infobar reveal" style="--i:1;" role="group" aria-label="ข้อมูลของว่างเวทมนตร์">
+            <button class="infobtn" type="button" data-info="source">ได้จากไหน?</button>
+            <button class="infobtn" type="button" data-info="storage">การเก็บ</button>
+            <button class="infobtn" type="button" data-info="usage">วิธีใช้งาน</button>
         </div>
-        <p class="credit">สร้างโดยผู้เล่นแคลชเพื่อผู้เล่นแคลช</p>
-      </div>
-    </footer>
-  </div>
 
-  <!-- Show All Overlay -->
-  <aside class="allpanel" id="allPanel" aria-hidden="true">
-    <button class="close" id="closeAll" type="button" aria-label="ปิด">×</button>
-    <div class="grid" id="allGrid" role="list"></div>
-  </aside>
+        <main class="viewport reveal" style="--i:2;" role="region" aria-roledescription="carousel" aria-label="Magic Snacks">
+            <div class="nav">
+                <button id="prev" type="button" aria-label="ก่อนหน้า">‹</button>
+                <button id="next" type="button" aria-label="ถัดไป">›</button>
+            </div>
 
-  <!-- Info Modal -->
-  <aside class="infomodal" id="infoModal" aria-hidden="true">
-    <div class="ibox">
-      <button class="iclose" id="infoClose" type="button" aria-label="ปิด">×</button>
-      <h3 id="infoTitle"></h3>
-      <div id="infoBody"></div>
+            <div class="track" id="track"></div>
+        </main>
+
+        <div class="controls-wrap reveal" style="--i:3;">
+            <div class="dots" id="dots" role="tablist" aria-label="ตัวบอกตำแหน่ง"></div>
+            <button class="showall" id="btnAll" type="button">
+                <span class="x-pulse" aria-hidden="true"></span>
+                <span>ดูทั้งหมด</span>
+            </button>
+        </div>
+
+        <footer class="gh-footer reveal" style="--i:4;">
+            <div class="container">
+                <article class="x-card gh-vault">
+                    <span class="x-corner x-corner--tl" aria-hidden="true"></span>
+                    <span class="x-corner x-corner--tr" aria-hidden="true"></span>
+                    <span class="x-corner x-corner--bl" aria-hidden="true"></span>
+                    <span class="x-corner x-corner--br" aria-hidden="true"></span>
+
+                    <div class="x-eyebrow gh-vault-eyebrow">
+                        <span class="x-eyebrow-dash" aria-hidden="true"></span>
+                        <span>/ CREATOR · CODE</span>
+                        <span class="x-eyebrow-dash" aria-hidden="true"></span>
+                    </div>
+
+                    <h2 class="x-title gh-vault-title">
+                        <span class="x-title-text">ยกระดับการเล่นแคลชของคุณ</span><span class="x-title-dot" aria-hidden="true">.</span>
+                    </h2>
+
+                    <p class="gh-vault-sub">สนับสนุนแกล้วด้วยโค้ดด้านล่าง ในร้านค้าของ Supercell</p>
+
+                    <div class="code-tiles" role="text" aria-label="โค้ด KLAWKLA">
+                        <span>K</span><span>L</span><span>A</span><span>W</span><span>K</span><span>L</span><span>A</span>
+                    </div>
+
+                    <span class="x-perf" aria-hidden="true"></span>
+
+                    <a class="x-cta"
+                       href="https://store.supercell.com/th/clashofclans?boost=KLAWKLA"
+                       target="_blank" rel="noopener noreferrer">
+                        <span class="x-cta-bg" aria-hidden="true"></span>
+                        <span>ใช้โค้ด KLAWKLA</span>
+                        <span class="x-cta-arrow" aria-hidden="true">→</span>
+                    </a>
+
+                    <div>
+                        <a class="gh-secondary" href="https://www.klawkla.com" target="_blank" rel="noopener noreferrer">
+                            เยี่ยมชม klawkla.com →
+                        </a>
+                    </div>
+                </article>
+
+                <p class="credit">สร้างโดยผู้เล่นแคลชเพื่อผู้เล่นแคลช</p>
+            </div>
+        </footer>
     </div>
-  </aside>
 
-  <script src="script.js" defer></script>
+    <!-- Show All Overlay -->
+    <aside class="allpanel" id="allPanel" aria-hidden="true" aria-label="ของว่างทั้งหมด">
+        <div class="allpanel-head">
+            <div class="x-eyebrow">
+                <span class="x-eyebrow-dash" aria-hidden="true"></span>
+                <span>/ ALL · SNACKS</span>
+                <span class="x-eyebrow-dash" aria-hidden="true"></span>
+            </div>
+            <button class="close" id="closeAll" type="button" aria-label="ปิด">×</button>
+        </div>
+        <div class="allpanel-body">
+            <div class="grid" id="allGrid" role="list"></div>
+        </div>
+    </aside>
+
+    <!-- Info Modal -->
+    <aside class="infomodal" id="infoModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
+        <article class="x-card ibox">
+            <span class="x-corner x-corner--tl" aria-hidden="true"></span>
+            <span class="x-corner x-corner--tr" aria-hidden="true"></span>
+            <span class="x-corner x-corner--bl" aria-hidden="true"></span>
+            <span class="x-corner x-corner--br" aria-hidden="true"></span>
+
+            <button class="iclose" id="infoClose" type="button" aria-label="ปิด">×</button>
+
+            <div class="x-eyebrow">
+                <span class="x-eyebrow-dash" aria-hidden="true"></span>
+                <span>รายละเอียด</span>
+                <span class="x-eyebrow-dash" aria-hidden="true"></span>
+            </div>
+
+            <h3 class="x-title ibox-title" id="infoTitle"></h3>
+
+            <span class="x-perf" aria-hidden="true"></span>
+
+            <div class="ibox-body" id="infoBody"></div>
+        </article>
+    </aside>
+
+    <script src="script.js" defer></script>
 </body>
+
 </html>
