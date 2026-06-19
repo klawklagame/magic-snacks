@@ -13,7 +13,7 @@ const SNACKS = [
     image: IMG_BASE+"builderbite-1.webp",
     headline:"เร่งความเร็วช่างก่อสร้าง 2 เท่า เป็นเวลา 1 ชั่วโมง",
     desc:"เหมาะกับช่วงอัปสิ่งก่อสร้างยาว ๆ และต้องการจบงานต่อเนื่อง",
-    tips:["ใช้คู่กับน้ำยาช่างก่อสร้างเพื่อเร่งรวมถึง ×11","เลือกเวลาที่ช่างก่อสร้างทุกคนกำลังทำงาน"],
+    tips:["ไม่สามารถทำงานพร้อมกับน้ำยาช่างก่อสร้างได้","เลือกเวลาที่ช่างก่อสร้างทุกคนกำลังทำงาน"],
     chips:[{icon:"time",label:"1 ชม."}]
   },
   {
@@ -21,14 +21,14 @@ const SNACKS = [
     image: IMG_BASE+"studysoup-1.webp",
     headline:"เร่งความเร็ววิจัยในห้องทดลอง 4 เท่า เป็นเวลา 1 ชั่วโมง",
     desc:"ดันวิจัยให้ทันฤดูกาล/อีเวนต์ ใช้ตอนมีทรัพยากรพร้อม",
-    tips:["ซ้อนกับน้ำยาวิจัยเพื่อเร่งรวมสูงสุด"],
+    tips:["ไม่สามารถทำงานพร้อมกับน้ำยาวิจัยได้"],
     chips:[{icon:"time",label:"1 ชม."}]
   },
   {
     id:"mightymorsel", name:"บาร์บีคิวทรงพลัง", category:"บูสต์",
     image: IMG_BASE+"mightymorsel-1.webp",
     headline:"บูสต์ผู้กล้า สัตว์เลี้ยง อุปกรณ์ให้มีเลเวลสูงสุดของบ้านในการโจมตี 3 ครั้งถัดไป",
-    desc:"เหมาะกับลงวอร์/ดันถ้วยที่ต้องการพลังฮีโร่สูงสุดแบบเร่งด่วน",
+    desc:"เหมาะกับตีวอร์/ตีโหมดจัดอันดับที่ต้องการพลังฮีโร่สูงสุด",
     tips:["ไม่ทำงานในเมืองกลางคืน","ใช้ทดสอบอุปกรณ์เลเวลสูงสุด"],
     chips:[{icon:"attack",label:"3 ครั้งถัดไป"}]
   },
@@ -37,19 +37,25 @@ const SNACKS = [
     image: IMG_BASE+"powerpancakes-1.webp",
     headline:"บูสต์ทหาร อาคม เครื่องจักรให้มีเลเวลสูงสุดของบ้านในการโจมตี 3 ครั้งถัดไป",
     desc:"ใช้ตอนต้องการพลังรบสูง ๆ ชั่วคราว เช่น วอร์/วอร์ลีก",
-    tips:["ไม่ทำงานในเมืองกลางคืน","ใช้คู่กับบาร์บีคิวทรงพลังเพื่อบูสต์ทั้งทหารและฮีโร่"],
+    tips:["ไม่ทำงานในเมืองกลางคืน","ใช้คู่กับบาร์บีคิวทรงพลังเพื่อบูสต์ทั้งผู้กล้า สัตว์เลี้ยง และอุปกรณ์"],
     chips:[{icon:"attack",label:"3 ครั้งถัดไป"}]
   }
 ];
 
-const track    = document.getElementById('track');
-const dotsWrap = document.getElementById('dots');
-const allPanel = document.getElementById('allPanel');
-const allGrid  = document.getElementById('allGrid');
-const closeAll = document.getElementById('closeAll');
-const btnAll   = document.getElementById('btnAll');
-const prevBtn  = document.getElementById('prev');
-const nextBtn  = document.getElementById('next');
+const CAT_CLASS = {
+  'กองกำลังเสริม': 'reinforce',
+  'บูสต์': 'boost',
+};
+const CAT_ORDER = ['กองกำลังเสริม', 'บูสต์'];
+const CHIP_EMOJI = { free: '🆓', time: '⏱️', attack: '⚔️' };
+
+const filters   = document.querySelector('.filters');
+const filterCats = document.getElementById('filterCats');
+const rail      = document.getElementById('rail');
+const stage     = document.getElementById('stage');
+const detail    = document.getElementById('detail');
+const prevBtn   = document.getElementById('prev');
+const nextBtn   = document.getElementById('next');
 const infoModal = document.getElementById('infoModal');
 const infoTitle = document.getElementById('infoTitle');
 const infoBody  = document.getElementById('infoBody');
@@ -58,241 +64,158 @@ const infoClose = document.getElementById('infoClose');
 const escapeHtml = (s) => String(s).replace(/[&<>"']/g, (c) =>
   ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c])
 );
+const catKeyOf = (it) => CAT_CLASS[it.category] || 'boost';
 
-const CAT_CLASS = {
-  'กองกำลังเสริม': 'reinforce',
-  'บูสต์': 'boost',
-};
-
-function chipHTML(c) {
-  return `<span class="chip"><i class="chip-icon ${escapeHtml(c.icon)}" aria-hidden="true"></i>${escapeHtml(c.label)}</span>`;
+function featChip(c) {
+  const e = CHIP_EMOJI[c.icon];
+  const icon = e ? `<span class="feat-ic" aria-hidden="true">${e}</span>` : '';
+  return `<span class="feat">${icon}${escapeHtml(c.label)}</span>`;
 }
 
-// Build DOM in fragments (single reflow)
-const slideFrag = document.createDocumentFragment();
-const dotFrag   = document.createDocumentFragment();
-const tileFrag  = document.createDocumentFragment();
+/* ── Build category filter chips ── */
+const chipFrag = document.createDocumentFragment();
+const allChip = document.createElement('button');
+allChip.type = 'button';
+allChip.className = 'chip is-active';
+allChip.dataset.cat = 'all';
+allChip.textContent = 'ทั้งหมด';
+chipFrag.appendChild(allChip);
+CAT_ORDER.forEach((cat) => {
+  const c = document.createElement('button');
+  c.type = 'button';
+  c.className = 'chip';
+  c.dataset.cat = cat;
+  c.style.setProperty('--c', `var(--cat-${CAT_CLASS[cat]})`);
+  c.textContent = cat;
+  chipFrag.appendChild(c);
+});
+filterCats.appendChild(chipFrag);
+const chips = Array.from(filterCats.children);
 
+/* ── Build rail snack buttons ── */
+const railFrag = document.createDocumentFragment();
 SNACKS.forEach((it, i) => {
-  const chipsHtml = (it.chips || []).map(chipHTML).join('');
+  const key = catKeyOf(it);
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'item';
+  btn.dataset.index = i;
+  btn.dataset.cat = it.category;
+  btn.style.setProperty('--acc', `var(--cat-${key})`);
+  btn.setAttribute('role', 'tab');
+  btn.setAttribute('aria-label', `${it.name} · ${it.category}`);
+  btn.innerHTML = `
+    <span class="item-ico"><img src="${it.image}" alt="" width="46" height="46" loading="${i < 4 ? 'eager' : 'lazy'}" decoding="async"></span>
+    <span class="item-text">
+      <span class="item-name">${escapeHtml(it.name)}</span>
+      <span class="item-cat">${escapeHtml(it.category)}</span>
+    </span>`;
+  railFrag.appendChild(btn);
+});
+rail.appendChild(railFrag);
+const itemBtns = Array.from(rail.children);
+
+/* ── State ── */
+let index = 0;
+let activeBtn = itemBtns[0];
+let filterCat = 'all';
+let visible = SNACKS.map((_, i) => i);
+
+const isVisible = (i) => filterCat === 'all' || SNACKS[i].category === filterCat;
+
+/* ── Render the stage detail with morph-in animation ── */
+function renderDetail(i) {
+  const it = SNACKS[i];
+  const key = catKeyOf(it);
+
   const tipsHtml  = (it.tips  || []).map(t => `<li>${escapeHtml(t)}</li>`).join('');
-  const loadAttr  = i === 0 ? 'eager' : 'lazy';
-  const priorityAttr = i === 0 ? ' fetchpriority="high"' : '';
+  const chipsHtml = (it.chips || []).map(featChip).join('');
 
-  const slide = document.createElement('article');
-  slide.className = 'slide';
-  slide.dataset.id = it.id;
-  slide.setAttribute('role', 'group');
-  slide.setAttribute('aria-roledescription', 'slide');
-  slide.setAttribute('aria-label', `${i + 1} จาก ${SNACKS.length}: ${it.name}`);
-  const catKey = CAT_CLASS[it.category] || 'boost';
-  slide.innerHTML = `
-    <article class="card magic-card magic-card--${catKey}">
-        <div class="magic-head">
-            <div class="magic-media">
-                <img src="${it.image}" alt="${escapeHtml(it.name)}" width="120" height="120" loading="${loadAttr}"${priorityAttr} decoding="async">
-            </div>
-            <div class="magic-titleblock">
-                <span class="eyebrow">${String(i + 1).padStart(2, '0')} · ${escapeHtml(it.category)}</span>
-                <h2 class="magic-name">${escapeHtml(it.name)}</h2>
-                <p class="magic-meta">${escapeHtml(it.headline || '')}</p>
-            </div>
-        </div>
+  stage.style.setProperty('--acc', `var(--cat-${key})`);
 
-        <div class="magic-body">
-            <div class="magic-desc-wrap">
-                <p class="magic-desc">${escapeHtml(it.desc || '')}</p>
-                ${tipsHtml ? `<ul class="magic-tips">${tipsHtml}</ul>` : ''}
-            </div>
-            ${chipsHtml ? `
-            <div class="magic-chips-wrap">
-                <div class="magic-chips-label">คุณสมบัติ</div>
-                <div class="magic-chips">${chipsHtml}</div>
-            </div>` : ''}
-        </div>
-    </article>`;
-  slideFrag.appendChild(slide);
+  detail.className = 'detail';   // reset → re-arm animation
+  detail.innerHTML = `
+    <div class="detail-media">
+      <span class="media-glow" aria-hidden="true"></span>
+      <span class="media-ring" aria-hidden="true"></span>
+      <img class="media-img" src="${it.image}" alt="${escapeHtml(it.name)}" width="168" height="168"
+           fetchpriority="high" decoding="async">
+    </div>
+    <div class="detail-head" style="--d:60ms">
+      <span class="eyebrow">${String(i + 1).padStart(2, '0')} · ${escapeHtml(it.category)}</span>
+      <h2 class="detail-name">${escapeHtml(it.name)}</h2>
+      <p class="detail-headline">${escapeHtml(it.headline || '')}</p>
+    </div>
+    <div class="detail-body" style="--d:130ms">
+      <p class="detail-desc">${escapeHtml(it.desc || '')}</p>
+      ${tipsHtml ? `<ul class="detail-tips">${tipsHtml}</ul>` : ''}
+      ${chipsHtml ? `
+      <div class="detail-feats">
+        <div class="feats-label">คุณสมบัติ</div>
+        <div class="feat-list">${chipsHtml}</div>
+      </div>` : ''}
+    </div>`;
 
-  const d = document.createElement('button');
-  d.type = 'button';
-  d.className = 'dot' + (i === 0 ? ' active' : '');
-  d.setAttribute('aria-label', `ไปยังรายการที่ ${i + 1}: ${it.name}`);
-  d.dataset.index = i;
-  dotFrag.appendChild(d);
-
-  const tile = document.createElement('button');
-  tile.type = 'button';
-  tile.className = 'tile';
-  tile.setAttribute('role', 'listitem');
-  tile.dataset.index = i;
-  tile.innerHTML = `
-    <img src="${it.image}" alt="" width="80" height="80" loading="lazy" decoding="async">
-    <div class="tname">${escapeHtml(it.name)}</div>`;
-  tileFrag.appendChild(tile);
-});
-
-track.appendChild(slideFrag);
-dotsWrap.appendChild(dotFrag);
-allGrid.appendChild(tileFrag);
-
-const slides = Array.from(track.children);
-const dots   = Array.from(dotsWrap.children);
-
-let index = 0, width = 0, activeDot = dots[0];
-
-const clamp = (n, min, max) => Math.max(min, Math.min(n, max));
-const setTransform = (px) => { track.style.transform = `translate3d(${px}px,0,0)`; };
-const toX = (i) => -i * width;
-
-function size() {
-  width = track.clientWidth;
-  setTransform(toX(index));
+  void detail.offsetWidth;       // force reflow
+  detail.classList.add('is-in');
+  stage.scrollTop = 0;
 }
 
-function updateActiveDot(next) {
-  if (activeDot === next) return;
-  activeDot.classList.remove('active');
-  activeDot.removeAttribute('aria-current');
-  next.classList.add('active');
-  next.setAttribute('aria-current', 'true');
-  activeDot = next;
+function updateNavButtons() {
+  const pos = visible.indexOf(index);
+  prevBtn.disabled = pos <= 0;
+  nextBtn.disabled = pos >= visible.length - 1;
 }
 
-function triggerCardEntrance() {
-  const card = slides[index]?.querySelector('.magic-card');
-  if (!card) return;
-  card.classList.remove('card-entering');
-  void card.offsetWidth;
-  card.classList.add('card-entering');
-}
+/* ── Select a snack by SNACKS index ── */
+function select(i, { scrollIntoView = true } = {}) {
+  if (i == null || i < 0 || i >= SNACKS.length) return;
+  index = i;
 
-function go(i, animate = true) {
-  const newIndex = clamp(i, 0, slides.length - 1);
-  const changed = newIndex !== index;
-  index = newIndex;
-  track.classList.toggle('animating', animate);
-  setTransform(toX(index));
-  prevBtn.disabled = index === 0;
-  nextBtn.disabled = index === slides.length - 1;
-  updateActiveDot(dots[index]);
-  if (animate && changed) triggerCardEntrance();
-}
-
-track.addEventListener('transitionend', (e) => {
-  if (e.propertyName === 'transform') track.classList.remove('animating');
-});
-
-dotsWrap.addEventListener('click', (e) => {
-  const d = e.target.closest('.dot');
-  if (d) go(parseInt(d.dataset.index, 10));
-});
-allGrid.addEventListener('click', (e) => {
-  const t = e.target.closest('.tile');
-  if (t) { go(parseInt(t.dataset.index, 10)); toggleAll(false); }
-});
-
-prevBtn.addEventListener('click', () => go(index - 1));
-nextBtn.addEventListener('click', () => go(index + 1));
-
-window.addEventListener('keydown', (e) => {
-  const anyOpen = allPanel.classList.contains('open') || infoModal.classList.contains('open');
-  if (anyOpen) {
-    if (e.key === 'Escape') {
-      if (allPanel.classList.contains('open')) toggleAll(false);
-      if (infoModal.classList.contains('open')) closeInfo();
-    }
-    return;
+  if (activeBtn !== itemBtns[i]) {
+    activeBtn.classList.remove('is-active');
+    activeBtn.removeAttribute('aria-selected');
+    activeBtn = itemBtns[i];
   }
-  if (e.key === 'ArrowLeft')  go(index - 1);
-  else if (e.key === 'ArrowRight') go(index + 1);
-});
+  activeBtn.classList.add('is-active');
+  activeBtn.setAttribute('aria-selected', 'true');
 
-// ── Swipe ──
-const SWIPE_MIN = 35, SWIPE_VEL = 0.28, DIR_LOCK = 7, EDGE_RESIST = 0.18;
-let sw = { active: false, dragging: false, dir: null, x0: 0, y0: 0, x: 0, t0: 0 };
+  if (scrollIntoView) {
+    activeBtn.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+  }
 
-function swipeStart(x, y) {
-  if (allPanel.classList.contains('open') || infoModal.classList.contains('open')) return;
-  sw = { active: true, dragging: false, dir: null, x0: x, y0: y, x, t0: performance.now() };
-  track.classList.remove('animating');
+  renderDetail(i);
+  updateNavButtons();
 }
 
-function swipeMove(x, y) {
-  if (!sw.active) return;
-  const dx = x - sw.x0, dy = y - sw.y0;
-
-  if (!sw.dir) {
-    if (Math.abs(dx) < DIR_LOCK && Math.abs(dy) < DIR_LOCK) return;
-    sw.dir = Math.abs(dx) >= Math.abs(dy) ? 'h' : 'v';
-    if (sw.dir === 'v') { sw.active = false; return; }
-    sw.dragging = true;
-  }
-  if (!sw.dragging) return;
-  sw.x = x;
-
-  let d = dx;
-  if ((index === 0 && dx > 0) || (index === slides.length - 1 && dx < 0)) {
-    d = dx * EDGE_RESIST;
-  }
-  setTransform(toX(index) + d);
+/* step through the currently visible snacks */
+function step(dir) {
+  const pos = visible.indexOf(index);
+  const next = visible[pos + dir];
+  if (next != null) select(next);
 }
 
-function swipeEnd() {
-  if (!sw.dragging) { sw.active = false; return; }
-  sw.active = false;
-  sw.dragging = false;
-  const dx  = sw.x - sw.x0;
-  const vel = Math.abs(dx) / Math.max(1, performance.now() - sw.t0);
-  if (Math.abs(dx) > SWIPE_MIN || vel > SWIPE_VEL) {
-    go(dx < 0 ? index + 1 : index - 1);
+/* ── Filtering ── */
+function applyFilter(cat) {
+  filterCat = cat;
+  chips.forEach(c => c.classList.toggle('is-active', c.dataset.cat === cat));
+
+  visible = [];
+  itemBtns.forEach((btn, i) => {
+    const show = isVisible(i);
+    btn.classList.toggle('hidden', !show);
+    if (show) visible.push(i);
+  });
+
+  if (!isVisible(index) && visible.length) {
+    select(visible[0]);
   } else {
-    go(index);
+    updateNavButtons();
   }
+  rail.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
 }
 
-track.addEventListener('pointerdown', (e) => {
-  if (e.pointerType === 'touch') return;
-  swipeStart(e.clientX, e.clientY);
-  track.setPointerCapture(e.pointerId);
-});
-track.addEventListener('pointermove', (e) => {
-  if (e.pointerType === 'touch') return;
-  swipeMove(e.clientX, e.clientY);
-});
-track.addEventListener('pointerup',     (e) => { if (e.pointerType !== 'touch') swipeEnd(); });
-track.addEventListener('pointercancel', (e) => { if (e.pointerType !== 'touch') swipeEnd(); });
-
-track.addEventListener('touchstart', (e) => {
-  const t = e.touches[0];
-  swipeStart(t.clientX, t.clientY);
-}, { passive: true });
-track.addEventListener('touchmove', (e) => {
-  if (!sw.active) return;
-  const t = e.touches[0];
-  swipeMove(t.clientX, t.clientY);
-  if (sw.dragging) e.preventDefault();
-}, { passive: false });
-track.addEventListener('touchend',    swipeEnd, { passive: true });
-track.addEventListener('touchcancel', swipeEnd, { passive: true });
-
-// ── Unified resize (debounced) ──
-let resizeTimeout;
-window.addEventListener('resize', () => {
-  clearTimeout(resizeTimeout);
-  resizeTimeout = setTimeout(size, 120);
-}, { passive: true });
-
-// ── Show-all panel ──
-function toggleAll(state) {
-  allPanel.classList.toggle('open', state);
-  allPanel.setAttribute('aria-hidden', String(!state));
-  document.body.style.overflow = state ? 'hidden' : '';
-}
-btnAll.addEventListener('click',   () => toggleAll(true));
-closeAll.addEventListener('click', () => toggleAll(false));
-allPanel.addEventListener('click', (e) => { if (e.target === allPanel) toggleAll(false); });
-
-// ── Info modal ──
+/* ── Info modal ── */
 const INFO = {
   source: {
     title: 'ได้จากไหน?',
@@ -318,29 +241,70 @@ const INFO = {
   }
 };
 
-function openInfo() {
+function openInfo(key) {
+  const data = INFO[key];
+  if (!data) return;
+  infoTitle.textContent = data.title;
+  infoBody.innerHTML = data.html;
   infoModal.classList.add('open');
   infoModal.setAttribute('aria-hidden', 'false');
-  document.body.style.overflow = 'hidden';
 }
 function closeInfo() {
   infoModal.classList.remove('open');
   infoModal.setAttribute('aria-hidden', 'true');
-  if (!allPanel.classList.contains('open')) document.body.style.overflow = '';
 }
+const infoOpen = () => infoModal.classList.contains('open');
 
-document.querySelectorAll('.infobtn').forEach((btn) => {
-  btn.addEventListener('click', () => {
-    const data = INFO[btn.dataset.info];
-    if (!data) return;
-    infoTitle.textContent = data.title;
-    infoBody.innerHTML = data.html;
-    openInfo();
-  });
+/* ── Events ── */
+rail.addEventListener('click', (e) => {
+  const btn = e.target.closest('.item');
+  if (btn) select(parseInt(btn.dataset.index, 10));
 });
+
+filters.addEventListener('click', (e) => {
+  const chip = e.target.closest('.chip');
+  if (chip) { applyFilter(chip.dataset.cat); return; }
+  const info = e.target.closest('.infobtn');
+  if (info) openInfo(info.dataset.info);
+});
+
 infoClose.addEventListener('click', closeInfo);
 infoModal.addEventListener('click', (e) => { if (e.target === infoModal) closeInfo(); });
 
-// Init
-size();
-go(0, false);
+prevBtn.addEventListener('click', () => step(-1));
+nextBtn.addEventListener('click', () => step(1));
+
+window.addEventListener('keydown', (e) => {
+  if (infoOpen()) { if (e.key === 'Escape') closeInfo(); return; }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { step(1); e.preventDefault(); }
+  else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { step(-1); e.preventDefault(); }
+});
+
+/* ── Swipe on the stage (prev/next within filtered list) ── */
+const SWIPE_MIN = 45;
+let sw = { active: false, dir: null, x0: 0, y0: 0 };
+
+stage.addEventListener('touchstart', (e) => {
+  if (infoOpen()) return;
+  const t = e.touches[0];
+  sw = { active: true, dir: null, x0: t.clientX, y0: t.clientY };
+}, { passive: true });
+
+stage.addEventListener('touchmove', (e) => {
+  if (!sw.active || sw.dir) return;
+  const t = e.touches[0];
+  const dx = t.clientX - sw.x0, dy = t.clientY - sw.y0;
+  if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+  sw.dir = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
+}, { passive: true });
+
+stage.addEventListener('touchend', (e) => {
+  if (!sw.active) return;
+  sw.active = false;
+  if (sw.dir !== 'h') return;
+  const dx = e.changedTouches[0].clientX - sw.x0;
+  if (Math.abs(dx) > SWIPE_MIN) step(dx < 0 ? 1 : -1);
+}, { passive: true });
+
+/* ── Init ── */
+select(0, { scrollIntoView: false });
