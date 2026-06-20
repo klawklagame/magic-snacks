@@ -6,30 +6,82 @@
 
 @font-face {
     font-family: "FC Krung Thep";
-    src: url("https://klawkla.com/content/files/2025/08/FCKrungThep-Light.woff2") format("woff2"),
-         url("https://klawkla.com/content/files/2025/08/FCKrungThep-Light.woff") format("woff");
-    font-weight: 100 600;
+    src:
+        url("assets/fonts/FCKrungThep-Light.woff2?v=fontfix-20260620") format("woff2"),
+        url("assets/fonts/FCKrungThep-Light.woff?v=fontfix-20260620") format("woff");
+    font-weight: 300;
     font-display: swap;
 }
 @font-face {
     font-family: "FC Krung Thep";
-    src: url("https://klawkla.com/content/files/2026/02/FCKrungThep-Bold.woff2") format("woff2"),
-         url("https://klawkla.com/content/files/2026/02/FCKrungThep-Bold.woff") format("woff");
-    font-weight: 700 900;
+    src:
+        url("assets/fonts/FCKrungThep-Light.woff2?v=fontfix-20260620") format("woff2"),
+        url("assets/fonts/FCKrungThep-Light.woff?v=fontfix-20260620") format("woff");
+    font-weight: 400;
+    font-display: swap;
+}
+@font-face {
+    font-family: "FC Krung Thep";
+    src:
+        url("assets/fonts/FCKrungThep-Light.woff2?v=fontfix-20260620") format("woff2"),
+        url("assets/fonts/FCKrungThep-Light.woff?v=fontfix-20260620") format("woff");
+    font-weight: 500;
+    font-display: swap;
+}
+@font-face {
+    font-family: "FC Krung Thep";
+    src:
+        url("assets/fonts/FCKrungThep-Bold.woff?v=fontfix-20260620") format("woff"),
+        url("assets/fonts/FCKrungThep-Bold.otf?v=fontfix-20260620") format("opentype");
+    font-weight: 700;
+    font-display: swap;
+}
+@font-face {
+    font-family: "FC Krung Thep";
+    src:
+        url("assets/fonts/FCKrungThep-Bold.woff?v=fontfix-20260620") format("woff"),
+        url("assets/fonts/FCKrungThep-Bold.otf?v=fontfix-20260620") format("opentype");
+    font-weight: 800;
     font-display: swap;
 }
 @font-face {
     font-family: "FC Maha Nakhon Flat";
-    src: url("https://klawkla.com/content/files/2025/08/FCMahaNakhonFlat-Light.woff2") format("woff2"),
-         url("https://klawkla.com/content/files/2025/08/FCMahaNakhonFlat-Light.woff") format("woff");
-    font-weight: 100 600;
+    src:
+        url("assets/fonts/FCMahaNakhonFlat-Light.woff2?v=fontfix-20260620") format("woff2"),
+        url("assets/fonts/FCMahaNakhonFlat-Light.woff?v=fontfix-20260620") format("woff");
+    font-weight: 300;
     font-display: swap;
 }
 @font-face {
     font-family: "FC Maha Nakhon Flat";
-    src: url("https://klawkla.com/content/files/2026/02/FCMahaNakhonFlat-Bold.woff2") format("woff2"),
-         url("https://klawkla.com/content/files/2026/02/FCMahaNakhonFlat-Bold.woff") format("woff");
-    font-weight: 700 900;
+    src:
+        url("assets/fonts/FCMahaNakhonFlat-Light.woff2?v=fontfix-20260620") format("woff2"),
+        url("assets/fonts/FCMahaNakhonFlat-Light.woff?v=fontfix-20260620") format("woff");
+    font-weight: 400;
+    font-display: swap;
+}
+@font-face {
+    font-family: "FC Maha Nakhon Flat";
+    src:
+        url("assets/fonts/FCMahaNakhonFlat-Light.woff2?v=fontfix-20260620") format("woff2"),
+        url("assets/fonts/FCMahaNakhonFlat-Light.woff?v=fontfix-20260620") format("woff");
+    font-weight: 500;
+    font-display: swap;
+}
+@font-face {
+    font-family: "FC Maha Nakhon Flat";
+    src:
+        url("assets/fonts/FCMahaNakhonFlat-Bold.woff?v=fontfix-20260620") format("woff"),
+        url("assets/fonts/FCMahaNakhonFlat-Bold.otf?v=fontfix-20260620") format("opentype");
+    font-weight: 700;
+    font-display: swap;
+}
+@font-face {
+    font-family: "FC Maha Nakhon Flat";
+    src:
+        url("assets/fonts/FCMahaNakhonFlat-Bold.woff?v=fontfix-20260620") format("woff"),
+        url("assets/fonts/FCMahaNakhonFlat-Bold.otf?v=fontfix-20260620") format("opentype");
+    font-weight: 800;
     font-display: swap;
 }
 
