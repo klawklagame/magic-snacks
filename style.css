@@ -839,6 +839,7 @@ img { max-width: 100%; display: block; }
     .detail-feats { width: 100%; max-width: 42ch; }
 
     .stage-nav { width: 42px; height: 42px; }
+    .stage-nav-group { top: calc(50% - 100px); }
 }
 
 @media (max-width: 480px) {
