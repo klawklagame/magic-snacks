@@ -196,13 +196,42 @@ img { max-width: 100%; display: block; }
     border-left: 1px solid var(--line);
     line-height: 1.1;
 }
-.topbar-tag {
+/* ── Search ── */
+.search {
+    position: relative;
     margin-left: auto;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+}
+.search svg {
+    position: absolute;
+    left: 1.1rem;
+    width: 14px; height: 14px;
+    fill: none;
+    stroke: var(--muted-2);
+    stroke-width: 2;
+    stroke-linecap: round;
+    pointer-events: none;
+}
+.search input {
+    width: clamp(150px, 22vw, 250px);
+    padding: .6rem 1.2rem .6rem 3.2rem;
     font-family: var(--font-sans);
-    font-size: 1.2rem;
-    color: var(--muted);
-    letter-spacing: 0.04em;
-    flex-shrink: 0;
+    font-size: 1.3rem;
+    color: var(--fg);
+    background: var(--bg-card);
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    outline: none;
+    transition: border-color .2s, background .2s;
+    -webkit-appearance: none;
+    appearance: none;
+}
+.search input::placeholder { color: var(--muted-2); }
+.search input:focus {
+    border-color: var(--fg);
+    background: var(--bg-elev);
 }
 
 /* ── Filter + info bar ── */
@@ -262,6 +291,11 @@ img { max-width: 100%; display: block; }
 }
 .chip.is-active::before { background: rgba(10,10,10,0.55); }
 .chip[data-cat="all"].is-active { background: var(--fg); color: #0a0a0a; }
+.chip-n {
+    font-weight: 400;
+    font-size: .88em;
+    opacity: .6;
+}
 
 /* info buttons — dashed pills to read as "learn more", not a filter */
 .infobtn {
@@ -414,8 +448,8 @@ img { max-width: 100%; display: block; }
     inset: 0;
     pointer-events: none;
     background:
-        radial-gradient(120% 80% at 30% -10%, color-mix(in srgb, var(--acc) 22%, transparent), transparent 60%),
-        radial-gradient(90% 70% at 100% 120%, color-mix(in srgb, var(--acc) 12%, transparent), transparent 55%);
+        radial-gradient(120% 80% at 30% -10%, color-mix(in srgb, var(--acc) 14%, transparent), transparent 60%),
+        radial-gradient(90% 70% at 100% 120%, color-mix(in srgb, var(--acc) 8%, transparent), transparent 55%);
     transition: background .5s var(--ease);
     z-index: 0;
 }
@@ -493,7 +527,7 @@ img { max-width: 100%; display: block; }
     position: absolute;
     inset: -14%;
     border-radius: 50%;
-    background: radial-gradient(circle, color-mix(in srgb, var(--acc) 55%, transparent), transparent 68%);
+    background: radial-gradient(circle, color-mix(in srgb, var(--acc) 42%, transparent), transparent 68%);
     filter: blur(6px);
     animation: glow-pulse 4.5s ease-in-out infinite;
 }
@@ -572,7 +606,7 @@ img { max-width: 100%; display: block; }
     left: 0; top: .4em;
     font-size: .72em;
     line-height: 1;
-    color: #7cc0ff;
+    color: var(--acc);
 }
 
 /* feature chips (คุณสมบัติ) */
@@ -611,6 +645,40 @@ img { max-width: 100%; display: block; }
     line-height: 1;
     font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
 }
+
+/* ── Empty state (no search / filter results) ── */
+.detail.is-empty {
+    display: flex;
+    justify-content: center;
+}
+.stage-empty {
+    text-align: center;
+    padding: var(--space-xl) var(--space-md);
+}
+.empty-title {
+    margin: 0 0 .4rem;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 1.7rem;
+    color: var(--fg);
+}
+.empty-hint {
+    margin: 0 0 var(--space-md);
+    font-size: 1.3rem;
+    color: var(--muted);
+}
+.empty-clear {
+    padding: .7rem 1.6rem;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: #0a0a0a;
+    background: var(--fg);
+    border-radius: 999px;
+    transition: transform .12s, opacity .2s;
+}
+.empty-clear:hover { opacity: .85; }
+.empty-clear:active { transform: scale(.95); }
 
 /* ==============================================================
    MORPH / ZOOM-IN ANIMATION (added by JS on each selection)
@@ -775,7 +843,7 @@ img { max-width: 100%; display: block; }
     :root { --rail-w: auto; }
 
     .topbar-title { font-size: 1.5rem; }
-    .topbar-tag { display: none; }
+    .search input { width: clamp(120px, 30vw, 200px); }
 
     .layout { flex-direction: column; }
 
@@ -843,8 +911,11 @@ img { max-width: 100%; display: block; }
 }
 
 @media (max-width: 480px) {
-    .topbar { padding: var(--space-sm) var(--space-md); }
+    .topbar { padding: var(--space-sm) var(--space-md); gap: var(--space-sm); }
     .topbar-title { padding-left: var(--space-sm); }
+    .brand-name { display: none; }
+    .search { flex: 1 1 auto; }
+    .search input { width: 100%; min-width: 90px; }
     .foot { display: none; }
 }
 

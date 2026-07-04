@@ -60,6 +60,7 @@ const infoModal = document.getElementById('infoModal');
 const infoTitle = document.getElementById('infoTitle');
 const infoBody  = document.getElementById('infoBody');
 const infoClose = document.getElementById('infoClose');
+const searchIn  = document.getElementById('search');
 
 const escapeHtml = (s) => String(s).replace(/[&<>"']/g, (c) =>
   ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c])
@@ -72,21 +73,30 @@ function featChip(c) {
   return `<span class="feat">${icon}${escapeHtml(c.label)}</span>`;
 }
 
-/* ── Build category filter chips ── */
-const chipFrag = document.createDocumentFragment();
-const allChip = document.createElement('button');
-allChip.type = 'button';
-allChip.className = 'chip is-active';
-allChip.dataset.cat = 'all';
-allChip.textContent = 'ทั้งหมด';
-chipFrag.appendChild(allChip);
-CAT_ORDER.forEach((cat) => {
+/* ── Build category filter chips (with item counts) ── */
+const catCounts = {};
+SNACKS.forEach((it) => { catCounts[it.category] = (catCounts[it.category] || 0) + 1; });
+
+function makeChip(cat, label, count) {
   const c = document.createElement('button');
   c.type = 'button';
   c.className = 'chip';
   c.dataset.cat = cat;
+  c.append(label + ' ');
+  const n = document.createElement('span');
+  n.className = 'chip-n';
+  n.textContent = count;
+  c.appendChild(n);
+  return c;
+}
+
+const chipFrag = document.createDocumentFragment();
+const allChip = makeChip('all', 'ทั้งหมด', SNACKS.length);
+allChip.classList.add('is-active');
+chipFrag.appendChild(allChip);
+CAT_ORDER.forEach((cat) => {
+  const c = makeChip(cat, cat, catCounts[cat] || 0);
   c.style.setProperty('--c', `var(--cat-${CAT_CLASS[cat]})`);
-  c.textContent = cat;
   chipFrag.appendChild(c);
 });
 filterCats.appendChild(chipFrag);
@@ -119,11 +129,24 @@ const itemBtns = Array.from(rail.children);
 let index = 0;
 let activeBtn = itemBtns[0];
 let filterCat = 'all';
-let visible = SNACKS.map((_, i) => i);
+let query = '';
+let visible = SNACKS.map((_, i) => i);   // visible indices in current filter + search
 
-const isVisible = (i) => filterCat === 'all' || SNACKS[i].category === filterCat;
+const isVisible = (i) => {
+  const it = SNACKS[i];
+  if (filterCat !== 'all' && it.category !== filterCat) return false;
+  if (!query) return true;
+  return it.name.toLowerCase().includes(query)
+    || it.category.toLowerCase().includes(query)
+    || (it.headline || '').toLowerCase().includes(query);
+};
 
 /* ── Render the stage detail with morph-in animation ── */
+const eyebrowText = (i) => {
+  const pos = visible.indexOf(i);
+  return `${String(pos + 1).padStart(2, '0')} / ${String(visible.length).padStart(2, '0')} · ${SNACKS[i].category}`;
+};
+
 function renderDetail(i) {
   const it = SNACKS[i];
   const key = catKeyOf(it);
@@ -142,7 +165,7 @@ function renderDetail(i) {
            fetchpriority="high" decoding="async">
     </div>
     <div class="detail-head" style="--d:60ms">
-      <span class="eyebrow">${String(i + 1).padStart(2, '0')} · ${escapeHtml(it.category)}</span>
+      <span class="eyebrow">${escapeHtml(eyebrowText(i))}</span>
       <h2 class="detail-name">${escapeHtml(it.name)}</h2>
       <p class="detail-headline">${escapeHtml(it.headline || '')}</p>
     </div>
@@ -195,10 +218,20 @@ function step(dir) {
   if (next != null) select(next);
 }
 
-/* ── Filtering ── */
-function applyFilter(cat) {
-  filterCat = cat;
-  chips.forEach(c => c.classList.toggle('is-active', c.dataset.cat === cat));
+/* ── Empty state (no matches) ── */
+function renderEmpty() {
+  detail.className = 'detail is-empty';
+  detail.innerHTML = `
+    <div class="stage-empty">
+      <p class="empty-title">ไม่พบของว่างที่ค้นหา</p>
+      <p class="empty-hint">ลองพิมพ์คำอื่น หรือเปลี่ยนหมวดหมู่</p>
+      <button class="empty-clear" type="button">แสดงของว่างทั้งหมด</button>
+    </div>`;
+}
+
+/* ── Filtering + search ── */
+function refreshVisibility() {
+  const wasEmpty = detail.classList.contains('is-empty');
 
   visible = [];
   itemBtns.forEach((btn, i) => {
@@ -207,11 +240,23 @@ function applyFilter(cat) {
     if (show) visible.push(i);
   });
 
-  if (!isVisible(index) && visible.length) {
-    select(visible[0]);
+  if (!visible.length) {
+    renderEmpty();
+  } else if (!isVisible(index)) {
+    select(visible[0], { scrollIntoView: false });
+  } else if (wasEmpty) {
+    select(index, { scrollIntoView: false });
   } else {
-    updateNavButtons();
+    const eb = detail.querySelector('.eyebrow');
+    if (eb) eb.textContent = eyebrowText(index);
   }
+  updateNavButtons();
+}
+
+function applyFilter(cat) {
+  filterCat = cat;
+  chips.forEach(c => c.classList.toggle('is-active', c.dataset.cat === cat));
+  refreshVisibility();
   rail.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
 }
 
@@ -274,8 +319,30 @@ infoModal.addEventListener('click', (e) => { if (e.target === infoModal) closeIn
 prevBtn.addEventListener('click', () => step(-1));
 nextBtn.addEventListener('click', () => step(1));
 
+searchIn.addEventListener('input', () => {
+  query = searchIn.value.trim().toLowerCase();
+  refreshVisibility();
+});
+searchIn.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && searchIn.value) {
+    searchIn.value = '';
+    query = '';
+    refreshVisibility();
+    e.stopPropagation();
+  }
+});
+
+detail.addEventListener('click', (e) => {
+  if (e.target.closest('.empty-clear')) {
+    searchIn.value = '';
+    query = '';
+    applyFilter('all');
+  }
+});
+
 window.addEventListener('keydown', (e) => {
   if (infoOpen()) { if (e.key === 'Escape') closeInfo(); return; }
+  if (e.target instanceof HTMLInputElement) return;   // don't hijack typing in search
   if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { step(1); e.preventDefault(); }
   else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { step(-1); e.preventDefault(); }
 });
